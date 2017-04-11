@@ -4,7 +4,6 @@ CC = g++
 GTEST_ROOT = ../googletest/googletest
 MAIN_DIR = .
 TESTS_DIR = $(MAIN_DIR)/tests
-# TODO create bin and build directory if it doesn't exist
 OBJS_DIR = $(MAIN_DIR)/build
 BIN_DIR = $(MAIN_DIR)/bin
 SRCS = $(TESTS_DIR)
@@ -18,13 +17,21 @@ all: tests
 
 tests: $(BIN_DIR)/unitTest1
 
-$(OBJS_DIR)/unitTest1.o: $(TESTS_DIR)/unitTest1.cpp $(HDRS)/ArrayList.h
+$(OBJS_DIR)/unitTest1.o: $(TESTS_DIR)/unitTest1.cpp $(HDRS)/ArrayList.h $(OBJS_DIR)/.dirstamp
 	$(CC)  -c $< -o $@ $(CXXFLAGS)
 
-$(BIN_DIR)/unitTest1: $(OBJS_DIR)/unitTest1.o
+$(BIN_DIR)/unitTest1: $(OBJS_DIR)/unitTest1.o $(BIN_DIR)/.dirstamp
 	$(CC)   $< -o $@ $(CXXFLAGS)
 
-# TODO probably add a phony rule for creating those directories
+# make sure that $(OBJS_DIR) and $(BIN_DIR) exist
+$(OBJS_DIR)/.dirstamp:
+	mkdir -p $(OBJS_DIR)
+	touch $(OBJS_DIR)/.dirstamp
+
+$(BIN_DIR)/.dirstamp:
+	mkdir -p $(BIN_DIR)
+	touch $(BIN_DIR)/.dirstamp
+
 .PHONY: clean
 clean:
 	rm -f $(OBJS_DIR)/*.o $(BIN_DIR)/*
