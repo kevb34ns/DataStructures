@@ -16,6 +16,8 @@ private:
 
     virtual void resize();
 
+    virtual bool removeAt(const int index);
+
 public:
     ArrayList();
 
@@ -60,6 +62,14 @@ ArrayList<T>::~ArrayList()
 template <class T>
 int ArrayList<T>::indexOf(const T& item) const
 {
+    for (int i = 0; i < count; ++i)
+    {
+        if (array[i] == item)
+        {
+            return i;
+        }
+    }
+
     return -1;
 }
 
@@ -78,6 +88,22 @@ void ArrayList<T>::resize()
 }
 
 template <class T>
+bool ArrayList<T>::removeAt(const int index)
+{
+    if (index < 0 || index >= count)
+    {
+        return false;
+    }
+    
+    for (int i = index + 1; i < count; i++) {
+        array[i - 1] = array[i];
+    }
+
+    count--;
+    return true;
+}
+
+template <class T>
 void ArrayList<T>::add(const T& item) 
 {
     if (count == capacity)
@@ -92,7 +118,13 @@ void ArrayList<T>::add(const T& item)
 template <class T>
 bool ArrayList<T>::remove(const T& item) 
 {
-    return false;
+    int index = indexOf(item);
+    if (index < 0)
+    {
+        return false;
+    }
+    
+    return removeAt(index);
 }
 
 template <class T>
@@ -110,7 +142,15 @@ bool ArrayList<T>::empty() const
 template <class T>
 bool ArrayList<T>::contains(const T& item) const 
 {
-    return false;
+    int index = indexOf(item);
+    if (index < 0)
+    {
+        return false;
+    }
+    else
+    {
+        return true;
+    }
 }
 
 template <class T>

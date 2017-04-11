@@ -1,6 +1,7 @@
 #include "ArrayList.h"
 #include "gtest/gtest.h"
 #include <vector>
+#include <cstdlib>
 
 class ArrayListTest : public ::testing::Test 
 {
@@ -33,6 +34,30 @@ TEST_F(ArrayListTest, SimpleAddTest)
 
 	ASSERT_FALSE(list.empty());
 	ASSERT_EQ(list.size(), 4);
+}
+
+TEST_F(ArrayListTest, SimpleRemoveTest)
+{
+	int num = 15;
+	for (int i = 0; i < num; ++i)
+	{
+		list.add(i);
+	}
+
+	for (int i = 0; i < num; ++i)
+	{
+		list.remove(i);
+		ASSERT_EQ(list.size(), num - i - 1);
+	}
+
+	ASSERT_TRUE(list.empty());
+}
+
+TEST_F(ArrayListTest, SimpleContainsTest)
+{
+	int n = rand();
+	list.add(n);
+	ASSERT_TRUE(list.contains(n));
 }
 
 TEST_F(ArrayListTest, ResizeTest)
