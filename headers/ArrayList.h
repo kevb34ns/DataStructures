@@ -25,7 +25,7 @@ public:
 
     virtual void add(const T& item);
 
-    virtual void remove(const T& item);
+    virtual bool remove(const T& item);
 
     virtual int size() const;
 
@@ -46,7 +46,7 @@ ArrayList<T>::ArrayList() : defaultCapacity(100), count(0), capacity(100)
 
 template <class T>
 ArrayList<T>::ArrayList(const int capacity) : defaultCapacity(capacity), 
-    count(0), capacity(100) 
+    count(0), capacity(capacity) 
 {
     array = new T[capacity];
 }
@@ -60,13 +60,21 @@ ArrayList<T>::~ArrayList()
 template <class T>
 int ArrayList<T>::indexOf(const T& item) const
 {
-
+    return -1;
 }
 
 template<class T>
 void ArrayList<T>::resize()
 {
-
+    capacity *= 2;
+    T* newArray = new T[capacity];
+    for (int i = 0; i < count; ++i)
+    {
+        newArray[i] = array[i];
+    }
+    delete[] array;
+    array = nullptr;
+    array = newArray;
 }
 
 template <class T>
@@ -82,9 +90,9 @@ void ArrayList<T>::add(const T& item)
 }
 
 template <class T>
-void ArrayList<T>::remove(const T& item) 
+bool ArrayList<T>::remove(const T& item) 
 {
-
+    return false;
 }
 
 template <class T>
@@ -102,7 +110,7 @@ bool ArrayList<T>::empty() const
 template <class T>
 bool ArrayList<T>::contains(const T& item) const 
 {
-
+    return false;
 }
 
 template <class T>
