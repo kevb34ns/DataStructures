@@ -23,11 +23,10 @@ protected:
 
 TEST_F(ListTest, SimpleAddTest) 
 {
-	int a = 1, b = 2, c = 3, d = 4;
-	list.add(a);
-	list.add(b);
-	list.add(c);
-	list.add(d);
+	list.add(1);
+	list.add(2);
+	list.add(3);
+	list.add(4);
 
 	ASSERT_FALSE(list.empty());
 	ASSERT_EQ(list.size(), 4);
@@ -38,22 +37,23 @@ TEST_F(ListTest, SimpleAddTest)
 	}
 }
 
-// TEST_F(ListTest, SimpleRemoveTest)
-// {
-// 	int num = 15;
-// 	for (int i = 0; i < num; ++i)
-// 	{
-// 		list.add(i);
-// 	}
+TEST_F(ListTest, SimpleRemoveTest)
+{
+	int num = 15;
+	for (int i = 0; i < num; ++i)
+	{
+		int x = i;
+		list.add(x);
+	}
 
-// 	for (int i = 0; i < num; ++i)
-// 	{
-// 		list.remove(i);
-// 		ASSERT_EQ(list.size(), num - i - 1);
-// 	}
+	for (int i = 0; i < num; ++i)
+	{
+		list.remove(i);
+		ASSERT_EQ(list.size(), num - i - 1);
+	}
 
-// 	ASSERT_TRUE(list.empty());
-// }
+	ASSERT_TRUE(list.empty());
+}
 
 // TEST_F(ListTest, SimpleContainsTest)
 // {

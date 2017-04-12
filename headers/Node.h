@@ -5,11 +5,13 @@ template <class T>
 class Node
 {
 private:
-   const T& item;
+   const T item;
    Node<T>* nextPtr;
 
 public:
-   Node(const T& item, Node<T>* nextPtr);
+   Node(const T item, Node<T>* nextPtr);
+
+   virtual ~Node();
 
    virtual const T& getItem() const;
 
@@ -19,8 +21,14 @@ public:
 };
 
 template <class T>
-Node<T>::Node(const T& item, Node<T>* nextPtr)
+Node<T>::Node(const T item, Node<T>* nextPtr)
    : item(item), nextPtr(nextPtr)
+{
+
+}
+
+template <class T>
+Node<T>::~Node()
 {
 
 }

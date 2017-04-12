@@ -46,16 +46,17 @@ LinkedList<T>::~LinkedList()
    clear();
 }
 
+//TODO can use this to simplify remove() when you have a doubly-linked list
 template <class T>
 const Node<T>* LinkedList<T>::getPointerTo(const T& item) const
 {
    return nullptr;
 }
 
+//TODO add to Doxygen documentation: type T MUST have a fully working copy constructor, as Node will make a copy of the item to prevent memory errors
 template <class T>
 void LinkedList<T>::add(const T& item)
 {
-   //TODO should be making a copy of 'item' to prevent The Calamity from ever happening again.
    Node<T>* newNode = new Node<T>(item, nullptr);
    if (headPtr == nullptr)
    {
@@ -77,6 +78,36 @@ void LinkedList<T>::add(const T& item)
 template <class T>
 bool LinkedList<T>::remove(const T& item)
 {
+   if (headPtr != nullptr)
+   {
+      Node<T>* curPtr = headPtr;
+      Node<T>* prevPtr = nullptr;
+      while (curPtr != nullptr)
+      {
+         if (curPtr->getItem() == item)
+         {
+            if (prevPtr == nullptr)
+            { // the head contains the item to remove
+               headPtr = headPtr->getNext();
+            }
+            else
+            {
+               prevPtr->setNext(curPtr->getNext());
+            }
+
+            count--;
+            delete curPtr;
+            curPtr = nullptr;
+            return true;
+         }
+         else
+         {
+            prevPtr = curPtr;
+            curPtr = curPtr->getNext();
+         }
+      }
+   }
+
    return false;
 }
 
@@ -112,7 +143,7 @@ std::vector<T> LinkedList<T>::toVector() const
    {
       Node<T>* curPtr = headPtr;
       while(curPtr != nullptr)
-      { 
+      {
          vec.push_back(curPtr->getItem());
          curPtr = curPtr->getNext();
       }
