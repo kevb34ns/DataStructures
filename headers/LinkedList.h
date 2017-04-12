@@ -50,6 +50,19 @@ LinkedList<T>::~LinkedList()
 template <class T>
 const Node<T>* LinkedList<T>::getPointerTo(const T& item) const
 {
+   Node<T>* curPtr = headPtr;
+   while (curPtr != nullptr)
+   {
+      if (curPtr->getItem() == item)
+      {
+         return curPtr;
+      }
+      else
+      {
+         curPtr = curPtr->getNext();
+      }
+   }
+
    return nullptr;
 }
 
@@ -126,13 +139,28 @@ bool LinkedList<T>::empty() const
 template <class T>
 bool LinkedList<T>::contains(const T& item) const
 {
-   return false;
+   if (getPointerTo(item) != nullptr)
+   {
+      return true; 
+   } 
+   else
+   {
+      return false;
+   }
 }
 
 template <class T>
 void LinkedList<T>::clear()
 {
-
+   Node<T>* curPtr = headPtr;
+   while (curPtr != nullptr)
+   {
+      Node<T>* nextPtr = curPtr->getNext();
+      delete curPtr;
+      curPtr = nextPtr;
+      count--;
+   }
+   headPtr = nullptr;
 }
 
 template <class T>

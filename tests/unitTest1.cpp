@@ -55,22 +55,34 @@ TEST_F(ListTest, SimpleRemoveTest)
 	ASSERT_TRUE(list.empty());
 }
 
-// TEST_F(ListTest, SimpleContainsTest)
-// {
-// 	int n = rand();
-// 	list.add(n);
-// 	ASSERT_TRUE(list.contains(n));
-// }
+TEST_F(ListTest, SimpleContainsTest)
+{
+	int n = rand();
+	list.add(n);
+	ASSERT_TRUE(list.contains(n));
+}
 
-// TEST_F(ListTest, ResizeTest)
-// {
-// 	int num = 101;
-// 	for (int i = 0; i < num; i++) {
-// 		list.add(i);
-// 	}
+TEST_F(ListTest, ResizeTest)
+{
+	int num = 101;
+	for (int i = 0; i < num; i++) {
+		list.add(i);
+	}
 
-// 	ASSERT_EQ(list.size(), num);
-// }
+	ASSERT_EQ(list.size(), num);
+}
+
+TEST_F(ListTest, ClearTest)
+{
+	int num = 101;
+	for (int i = 0; i < num; i++) {
+		list.add(i);
+	}
+
+	list.clear();
+	
+	ASSERT_TRUE(list.empty());
+}
 
 int main(int argc, char** argv) 
 {
