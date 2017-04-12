@@ -52,6 +52,18 @@ TEST_F(ListTest, SimpleRemoveTest)
 		ASSERT_EQ(list.size(), num - i - 1);
 	}
 
+	for (int i = 0; i < num; ++i)
+	{
+		int x = i;
+		list.add(x);
+	}
+
+	for (int i = num - 1; i >= 0; --i)
+	{
+		list.remove(i);
+		ASSERT_EQ(list.size(), i);
+	}
+
 	ASSERT_TRUE(list.empty());
 }
 
@@ -80,7 +92,7 @@ TEST_F(ListTest, ClearTest)
 	}
 
 	list.clear();
-	
+
 	ASSERT_TRUE(list.empty());
 }
 

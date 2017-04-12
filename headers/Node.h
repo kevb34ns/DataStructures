@@ -7,9 +7,10 @@ class Node
 private:
    const T item;
    Node<T>* nextPtr;
+   Node<T>* prevPtr;
 
 public:
-   Node(const T item, Node<T>* nextPtr);
+   Node(const T item, Node<T>* nextPtr, Node<T>* prevPtr);
 
    virtual ~Node();
 
@@ -18,11 +19,15 @@ public:
    virtual Node<T>* getNext() const;
 
    virtual void setNext(Node<T>* nextPtr);   
+
+   virtual Node<T>* getPrev() const;
+
+   virtual void setPrev(Node<T>* prevPtr);
 };
 
 template <class T>
-Node<T>::Node(const T item, Node<T>* nextPtr)
-   : item(item), nextPtr(nextPtr)
+Node<T>::Node(const T item, Node<T>* nextPtr, Node<T>* prevPtr)
+   : item(item), nextPtr(nextPtr), prevPtr(prevPtr)
 {
 
 }
@@ -49,6 +54,18 @@ template <class T>
 void Node<T>::setNext(Node<T>* nextPtr)
 {
    this->nextPtr = nextPtr;
+}
+
+template <class T>
+Node<T>* Node<T>::getPrev() const
+{
+   return prevPtr;
+}
+
+template <class T>
+void Node<T>::setPrev(Node<T>* prevPtr)
+{
+   this->prevPtr = prevPtr;
 }
 
 #endif

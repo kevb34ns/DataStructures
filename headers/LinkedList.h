@@ -10,9 +10,10 @@ class LinkedList : public List<T>
 {
 private:
    Node<T>* headPtr;
+   Node<T>* tailPtr;
    int count;
 
-   const Node<T>* getPointerTo(const T& item) const;
+   Node<T>* getPointerTo(const T& item) const;
 
 public:
    LinkedList();
@@ -35,7 +36,7 @@ public:
 };
 
 template <class T>
-LinkedList<T>::LinkedList() : headPtr(nullptr), count(0)
+LinkedList<T>::LinkedList() : headPtr(nullptr), tailPtr(nullptr), count(0)
 {
 
 }
@@ -46,9 +47,8 @@ LinkedList<T>::~LinkedList()
    clear();
 }
 
-//TODO can use this to simplify remove() when you have a doubly-linked list
 template <class T>
-const Node<T>* LinkedList<T>::getPointerTo(const T& item) const
+Node<T>* LinkedList<T>::getPointerTo(const T& item) const
 {
    Node<T>* curPtr = headPtr;
    while (curPtr != nullptr)
@@ -70,7 +70,7 @@ const Node<T>* LinkedList<T>::getPointerTo(const T& item) const
 template <class T>
 void LinkedList<T>::add(const T& item)
 {
-   Node<T>* newNode = new Node<T>(item, nullptr);
+   Node<T>* newNode = new Node<T>(item, nullptr, nullptr);
    if (headPtr == nullptr)
    {
       headPtr = newNode;
@@ -84,44 +84,46 @@ void LinkedList<T>::add(const T& item)
          curPtr = curPtr->getNext();
       }
       curPtr->setNext(newNode);
+      newNode->setPrev(curPtr);
       count++;
    }
+
+   tailPtr = newNode;
 }
 
 template <class T>
 bool LinkedList<T>::remove(const T& item)
 {
-   if (headPtr != nullptr)
+   Node<T>* toRemove = getPointerTo(item);
+   if (toRemove != nullptr)
    {
-      Node<T>* curPtr = headPtr;
-      Node<T>* prevPtr = nullptr;
-      while (curPtr != nullptr)
+      if (toRemove == headPtr)
       {
-         if (curPtr->getItem() == item)
-         {
-            if (prevPtr == nullptr)
-            { // the head contains the item to remove
-               headPtr = headPtr->getNext();
-            }
-            else
-            {
-               prevPtr->setNext(curPtr->getNext());
-            }
-
-            count--;
-            delete curPtr;
-            curPtr = nullptr;
-            return true;
-         }
-         else
-         {
-            prevPtr = curPtr;
-            curPtr = curPtr->getNext();
-         }
+         headPtr = toRemove->getNext();
       }
-   }
+      else
+      {
+         toRemove->getPrev()->setNext(toRemove->getNext());
+         if (toRemove->getNext() != nullptr)
+         {
+            toRemove->getNext()->setPrev(toRemove->getPrev());
+         }        
+      }
 
-   return false;
+      if (toRemove == tailPtr)
+      {
+         tailPtr = toRemove->getPrev();
+      }
+
+      count--;
+      delete toRemove;
+      toRemove = nullptr;
+      return true;
+   }
+   else
+   {
+      return false;
+   }
 }
 
 template <class T>
@@ -161,6 +163,7 @@ void LinkedList<T>::clear()
       count--;
    }
    headPtr = nullptr;
+   tailPtr = nullptr;
 }
 
 template <class T>
