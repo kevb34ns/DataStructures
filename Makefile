@@ -17,7 +17,7 @@ all: tests
 
 tests: $(BIN_DIR)/unitTest1
 
-$(OBJS_DIR)/unitTest1.o: $(TESTS_DIR)/unitTest1.cpp $(HDRS)/ArrayList.h $(OBJS_DIR)/.dirstamp
+$(OBJS_DIR)/unitTest1.o: $(TESTS_DIR)/unitTest1.cpp $(HDRS)/ArrayList.h $(HDRS)/LinkedList.h $(HDRS)/Node.h $(OBJS_DIR)/.dirstamp
 	$(CC)  -c $< -o $@ $(CXXFLAGS)
 
 $(BIN_DIR)/unitTest1: $(OBJS_DIR)/unitTest1.o $(BIN_DIR)/.dirstamp
