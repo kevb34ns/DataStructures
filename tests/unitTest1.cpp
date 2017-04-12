@@ -23,11 +23,12 @@ protected:
 
 TEST_F(ListTest, SimpleAddTest) 
 {
-	list.add(1);
-	list.add(2);
-	list.add(3);
-	list.add(4);
-	
+	int a = 1, b = 2, c = 3, d = 4;
+	list.add(a);
+	list.add(b);
+	list.add(c);
+	list.add(d);
+
 	ASSERT_FALSE(list.empty());
 	ASSERT_EQ(list.size(), 4);
 

@@ -4,7 +4,6 @@
 #include "List.h"
 #include "Node.h"
 #include <vector>
-#include <iostream>
 
 template <class T>
 class LinkedList : public List<T>
@@ -33,23 +32,7 @@ public:
    virtual void clear();
 
    virtual std::vector<T> toVector() const;
-
-void print()
-{
-   if (!empty())
-   {
-      std::cout << "headPtr " << headPtr << std::endl;
-      Node<T>* curPtr = headPtr;
-      while(curPtr != nullptr)
-      {
-         std::cout << "print " << curPtr->getItem() << std::endl;
-         curPtr = curPtr->getNext();
-      }
-   }
-}
 };
-
-#endif
 
 template <class T>
 LinkedList<T>::LinkedList() : headPtr(nullptr), count(0)
@@ -66,12 +49,13 @@ LinkedList<T>::~LinkedList()
 template <class T>
 const Node<T>* LinkedList<T>::getPointerTo(const T& item) const
 {
-
+   return nullptr;
 }
 
 template <class T>
 void LinkedList<T>::add(const T& item)
 {
+   //TODO should be making a copy of 'item' to prevent The Calamity from ever happening again.
    Node<T>* newNode = new Node<T>(item, nullptr);
    if (headPtr == nullptr)
    {
@@ -81,21 +65,19 @@ void LinkedList<T>::add(const T& item)
    else
    {
       Node<T>* curPtr = headPtr;
-   std::cout << "add " << curPtr->getItem() << std::endl;
       while(curPtr->getNext() != nullptr)
       {
          curPtr = curPtr->getNext();
       }
       curPtr->setNext(newNode);
       count++;
-      print();
    }
 }
 
 template <class T>
 bool LinkedList<T>::remove(const T& item)
 {
-
+   return false;
 }
 
 template <class T>
@@ -113,7 +95,7 @@ bool LinkedList<T>::empty() const
 template <class T>
 bool LinkedList<T>::contains(const T& item) const
 {
-
+   return false;
 }
 
 template <class T>
@@ -130,8 +112,7 @@ std::vector<T> LinkedList<T>::toVector() const
    {
       Node<T>* curPtr = headPtr;
       while(curPtr != nullptr)
-      {
-   std::cout << "vec " << curPtr->getItem() << std::endl;  
+      { 
          vec.push_back(curPtr->getItem());
          curPtr = curPtr->getNext();
       }
@@ -139,3 +120,5 @@ std::vector<T> LinkedList<T>::toVector() const
 
    return vec;
 }
+
+#endif

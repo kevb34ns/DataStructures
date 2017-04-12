@@ -18,8 +18,6 @@ public:
    virtual void setNext(Node<T>* nextPtr);   
 };
 
-#endif
-
 template <class T>
 Node<T>::Node(const T& item, Node<T>* nextPtr)
    : item(item), nextPtr(nextPtr)
@@ -44,3 +42,5 @@ void Node<T>::setNext(Node<T>* nextPtr)
 {
    this->nextPtr = nextPtr;
 }
+
+#endif
