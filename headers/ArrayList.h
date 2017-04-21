@@ -23,7 +23,11 @@ public:
 
     ArrayList(const int capacity);
 
+    ArrayList(const ArrayList<T>& other);
+
     ~ArrayList();
+
+    ArrayList<T>& operator=(const ArrayList<T>& other);
 
     virtual void add(const T& item);
 
@@ -54,9 +58,43 @@ ArrayList<T>::ArrayList(const int capacity) : defaultCapacity(capacity),
 }
 
 template <class T>
+ArrayList<T>::ArrayList(const ArrayList<T>& other)
+{
+    defaultCapacity = other.defaultCapacity;
+    count = other.count;
+    capacity = other.capacity;
+    array = new T[capacity];
+    for (int i = 0; i < count; i++)
+    {
+        array[i] = other.array[i];
+    }
+}
+
+template <class T>
 ArrayList<T>::~ArrayList() 
 {
     delete[] array;
+    array = nullptr;
+}
+
+template <class T>
+ArrayList<T>& ArrayList<T>::operator=(const ArrayList<T>& other)
+{
+    if (array != nullptr)
+    {
+        delete [] array;
+    }
+
+    defaultCapacity = other.defaultCapacity;
+    count = other.count;
+    capacity = other.capacity;
+    array = new T[capacity];
+    for (int i = 0; i < count; i++)
+    {
+        array[i] = other.array[i];
+    }
+
+    return *this;
 }
 
 template <class T>

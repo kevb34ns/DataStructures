@@ -18,7 +18,11 @@ private:
 public:
    LinkedList();
 
+   LinkedList(const LinkedList<T>& other);
+
    ~LinkedList();
+
+   LinkedList<T>& operator=(const LinkedList<T>& other);
 
    virtual void add(const T& item);
 
@@ -42,9 +46,63 @@ LinkedList<T>::LinkedList() : headPtr(nullptr), tailPtr(nullptr), count(0)
 }
 
 template <class T>
+LinkedList<T>::LinkedList(const LinkedList<T>& other) :
+      count(other.count)
+{
+   Node<T>* otherPtr = other.headPtr;
+   Node<T>* thisPtr = nullptr;
+   Node<T>* prevPtr = nullptr;
+   while (otherPtr != nullptr)
+   {
+      thisPtr = new Node<T>(otherPtr->getItem(), nullptr, prevPtr);
+      if (otherPtr == other.headPtr)
+      {
+         headPtr = thisPtr;
+      } 
+      else
+      {  // if implemented correctly, prevPtr != nullptr at this point
+         prevPtr->setNext(thisPtr);
+      }
+
+      prevPtr = thisPtr;
+      otherPtr = otherPtr->getNext();
+   }
+   tailPtr = thisPtr;
+}
+
+template <class T>
 LinkedList<T>::~LinkedList()
 {
    clear();
+}
+
+//TODO can you just use the assignment operator in the copy constructor or vice versa?
+template <class T>
+LinkedList<T>& LinkedList<T>::operator=(const LinkedList<T>& other)
+{
+   clear();
+
+   Node<T>* otherPtr = other.headPtr;
+   Node<T>* thisPtr = nullptr;
+   Node<T>* prevPtr = nullptr;
+   while (otherPtr != nullptr)
+   {
+      thisPtr = new Node<T>(otherPtr->getItem(), nullptr, prevPtr);
+      if (otherPtr == other.headPtr)
+      {
+         headPtr = thisPtr;
+      } 
+      else
+      {  // if implemented correctly, prevPtr != nullptr at this point
+         prevPtr->setNext(thisPtr);
+      }
+
+      prevPtr = thisPtr;
+      otherPtr = otherPtr->getNext();
+   }
+   tailPtr = thisPtr;
+
+   return *this;
 }
 
 template <class T>
