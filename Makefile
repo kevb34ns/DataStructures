@@ -27,7 +27,7 @@ $(OBJS_DIR)/StackTest.o: $(TESTS_DIR)/StackTest.cpp $(HDRS)/Stack.h $(HDRS)/Node
 	$(CC)  -c $< -o $@ $(CXXFLAGS)
 
 $(BIN_DIR)/StackTest: $(OBJS_DIR)/StackTest.o $(BIN_DIR)/.dirstamp
-	$(CC)   $< -o $@ $(CXXFLAGS)	
+	$(CC)   $< -o $@ $(CXXFLAGS)
 
 # make sure that $(OBJS_DIR) and $(BIN_DIR) exist
 $(OBJS_DIR)/.dirstamp:
