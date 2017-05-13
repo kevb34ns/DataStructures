@@ -1,3 +1,6 @@
+#ifndef STACK_H
+#define STACK_H
+
 #include "Node.h"
 #include <stdexcept>
 
@@ -124,3 +127,5 @@ void Stack<T>::clear()
    }
    topPtr = nullptr;
 }
+
+#endif

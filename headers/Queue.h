@@ -1,3 +1,6 @@
+#ifndef QUEUE_H
+#define QUEUE_H
+
 #include "Node.h"
 #include <stdexcept>
 
@@ -6,16 +9,16 @@ class Queue
 {
 private:
    // circular back pointer (backPtr->getNext() is the 'front')
-   Node<T>* backPtr;
+   Node<T>* backPtr = nullptr;
 
 public:
    Queue();
 
    Queue(const Queue<T>& other);
 
-   ~Queue();
+   virtual ~Queue();
 
-   Queue<T>& operator=(const Queue<T>& other);
+   virtual Queue<T>& operator=(const Queue<T>& other);
 
    virtual bool push(const T& item);
 
@@ -31,7 +34,7 @@ public:
 template <class T>
 Queue<T>::Queue()
 {
-   backPtr = nullptr;
+
 }
 
 template <class T>
@@ -58,15 +61,25 @@ Queue<T>& Queue<T>::operator=(const Queue<T>& other)
    }
 
    Node<T>* thisPtr = nullptr;
-   Node<T>* prevPtr = nullptr;
-   do
+   while (true)
    {
-      thisPtr = new Node<T>(otherPtr->getItem(), nullptr, nullptr);
-      thisPtr->setNext(thisPtr);
-      prevPtr = thisPtr;
       otherPtr = otherPtr->getNext();
 
-   } while (otherPtr != other.backPtr);
+      thisPtr = new Node<T>(otherPtr->getItem(), nullptr, nullptr);
+      if (backPtr == nullptr)
+      {
+         thisPtr->setNext(thisPtr);
+      }
+      else
+      {
+         Node<T>* tempPtr = backPtr->getNext();
+         backPtr->setNext(thisPtr);
+         thisPtr->setNext(tempPtr);
+      }
+      backPtr = thisPtr;
+
+      if (otherPtr == other.backPtr) break;
+   }
 
    return *this;
 }
@@ -147,3 +160,5 @@ void Queue<T>::clear()
    delete backPtr;
    backPtr = nullptr;
 }
+
+#endif

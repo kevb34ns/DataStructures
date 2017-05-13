@@ -1,25 +1,10 @@
 #include "Queue.h"
 #include "gtest/gtest.h"
 
-class QueueTest : public ::testing::Test 
+TEST(QueueTest, Test1)
 {
-protected:
    Queue<int> queue;
 
-   QueueTest()
-   {
-
-   }
-
-   ~QueueTest()
-   {
-
-   }
-};
-
-TEST_F(QueueTest, Test1)
-{
-   //TODO test copy constructor/assignment operator
    ASSERT_TRUE(queue.empty());
    queue.push(0);
    ASSERT_FALSE(queue.empty());
@@ -28,7 +13,12 @@ TEST_F(QueueTest, Test1)
    queue.push(2);
    ASSERT_EQ(queue.front(), 0);
 
+   Queue<int> queueCopy(queue);
+   ASSERT_EQ(queueCopy.front(), 0);
+
    queue.pop();
+   ASSERT_EQ(queueCopy.front(), 0);
+
    queue.pop();
    ASSERT_EQ(queue.front(), 2);
 
