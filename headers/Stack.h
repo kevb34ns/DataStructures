@@ -8,14 +8,16 @@ template <class T>
 class Stack
 {
 private:
-   Node<T>* topPtr;
+   Node<T>* topPtr = nullptr;
 
 public:
    Stack();
-   Stack(const Stack<T>& other);
-   ~Stack();
 
-   Stack<T>& operator=(const Stack<T>& other);
+   Stack(const Stack<T>& other);
+
+   virtual ~Stack();
+
+   virtual Stack<T>& operator=(const Stack<T>& other);
 
    virtual bool push(const T& item);
 
@@ -30,7 +32,7 @@ public:
 };
 
 template <class T>
-Stack<T>::Stack() : topPtr(nullptr)
+Stack<T>::Stack()
 {
 
 }

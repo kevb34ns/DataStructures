@@ -27,7 +27,12 @@ TEST_F(StackTest, Test1)
    stack.push(2);
    ASSERT_EQ(stack.top(), 2);
 
+   Stack<int> stackCopy(stack);
+   ASSERT_EQ(stackCopy.top(), 2);
+
    stack.pop();
+   ASSERT_EQ(stackCopy.top(), 2);
+
    stack.pop();
    ASSERT_EQ(stack.top(), 0);
 
