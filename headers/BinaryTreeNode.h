@@ -19,6 +19,8 @@ public:
 
    virtual const T& getItem() const;
 
+   virtual void setItem(const T& newItem);
+
    virtual BinaryTreeNode<T>* getLeft() const;
 
    virtual BinaryTreeNode<T>* getRight() const;
