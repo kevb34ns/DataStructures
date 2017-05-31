@@ -80,7 +80,8 @@ protected:
      * @param treePtr The root of the tree to copy.
      * @return The root of the copied tree.
      */
-    virtual BinaryTreeNode<T>* copyTree(const BinaryTreeNode<T>* treePtr);
+    virtual BinaryTreeNode<T>* copyTree(const BinaryTreeNode<T>* treePtr) 
+        const;
 
     /**
      * Preorder traversal helper method.
@@ -159,19 +160,20 @@ BinaryTree<T>::BinaryTree(const T& rootItem,
 template <class T>
 BinaryTree<T>::(const BinaryTree<T>& other)
 {
-    //TODO
+    *this = other;
 }
 
 template <class T>
 BinaryTree<T>::~BinaryTree()
 {
-   
+    clear();
 }
 
 template <class T>
 BinaryTreeNode<T>& BinaryTree<T>::operator=(const BinaryTreeNode<T>& other)
 {
-   
+    rootPtr = copyTree(other.rootPtr);
+    return *this;
 }
 
 template <class T>
@@ -379,59 +381,98 @@ bool BinaryTree<T>::contains(const T& item)
 template <class T>
 void BinaryTree<T>::destroyTree(BinaryTreeNode<T>* subTreePtr)
 {
-   
+    if (subTreePtr == nullptr)
+    {
+        return;
+    }
+
+    destroyTree(subTreePtr->getLeft());
+    destroyTree(subTreePtr->getRight());
+    delete subTreePtr;
+    subTreePtr = nullptr;
 }
 
 template <class T>
 void BinaryTree<T>::clear()
 {
-   
+    destroyTree(rootPtr);
+    rootPtr = nullptr;
 }
 
 template <class T>
-BinaryTreeNode<T>* BinaryTree<T>::copyTree(const BinaryTreeNode<T>* treePtr)
+BinaryTreeNode<T>* BinaryTree<T>::copyTree(const BinaryTreeNode<T>* treePtr) 
+    const
 {
-   
+    if (treePtr == nullptr)
+    {
+        return nullptr;
+    }
+
+    BinaryTreeNode<T>* newNodePtr = new BinaryTreeNode(treePtr->getItem());
+    newNodePtr->setLeft(copyTree(treePtr->getLeft()));
+    newNodePtr->setRight(copyTree(treePtr->getRight()));
+
+    return newNodePtr;
 }
 
 template <class T>
 void BinaryTree<T>::preorderHelper(void (* visit)(T&), 
     BinaryTreeNode<T>* treePtr) const
 {
-   
+    if (treePtr == nullptr)
+    {
+        return;
+    }
+
+    visit(treePtr->getItem()); // TODO cannot past returned const ref to non-const ref
+    preorderHelper(visit, treePtr->getLeft());
+    preorderHelper(visit, treePtr->getRight());
 }
 
 template <class T>
 void BinaryTree<T>::inorderHelper(void (* visit)(T&), 
     BinaryTreeNode<T>* treePtr) const
 {
-   
+    if (treePtr == nullptr)
+    {
+        return;
+    }
+
+    inorderHelper(visit, treePtr->getLeft());
+    visit(treePtr->getItem());
+    inorderHelper(visit, treePtr->getRight());    
 }
 
 template <class T>
 void BinaryTree<T>::postorderHelper(void (* visit)(T&), 
     BinaryTreeNode<T>* treePtr) const
 {
-   
+    if (treePtr == nullptr)
+    {
+        return;
+    }
+
+    postorderHelper(visit, treePtr->getLeft());
+    postorderHelper(visit, treePtr->getRight());
+    visit(treePtr->getItem());
 }
 
 template <class T>
 void BinaryTree<T>::preorderTraverse(void (* visit)(T&)) const
 {
-   
+    preorderHelper(visit, rootPtr);
 }
 
 template <class T>
 void BinaryTree<T>::inorderTraverse(void (* visit)(T&)) const
 {
-   
+    inorderHelper(visit, rootPtr);
 }
 
 template <class T>
 void BinaryTree<T>::postorderTraverse(void (* visit)(T&)) const
 {
-   
+    postorderHelper(visit, rootPtr);
 }
-
 
 #endif
