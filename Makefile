@@ -35,6 +35,12 @@ $(OBJS_DIR)/QueueTest.o: $(TESTS_DIR)/QueueTest.cpp $(HDRS)/Queue.h $(HDRS)/Node
 $(BIN_DIR)/QueueTest: $(OBJS_DIR)/QueueTest.o $(BIN_DIR)/.dirstamp
 	$(CC)   $< -o $@ $(CXXFLAGS)
 
+$(OBJS_DIR)/BinaryTreeTest.o: $(TESTS_DIR)/BinaryTreeTest.cpp $(HDRS)/BinaryTree.h $(HDRS)/BinaryTreeNode.h $(OBJS_DIR)/.dirstamp
+	$(CC)   $< -o $@ $(CXXFLAGS)
+
+$(BIN_DIR)/BinaryTreeTest: $(OBJS_DIR)/BinaryTreeTest.o $(BIN_DIR)/.dirstamp
+	$(CC)   $< -o $@ $(CXXFLAGS)
+
 # make sure that $(OBJS_DIR) and $(BIN_DIR) exist
 $(OBJS_DIR)/.dirstamp:
 	mkdir -p $(OBJS_DIR)

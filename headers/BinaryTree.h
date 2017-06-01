@@ -8,6 +8,7 @@
 #define BINARY_TREE_H
 
 #include "BinaryTreeNode.h"
+#include <stdexcept>
 
 template <class T>
 class BinaryTree
@@ -55,7 +56,7 @@ protected:
      * @return the root of the tree.
      */
     virtual BinaryTreeNode<T>* removeValue(BinaryTreeNode<T>* subTreePtr,
-        const T target, bool& success);
+        const T& target, bool& success);
 
     /**
      * Overwrites the value of the node pointed to by @c subTreePtr by moving 
@@ -107,10 +108,10 @@ public:
         const BinaryTree<T>* rightSubTreePtr);
     BinaryTree(const BinaryTree<T>& other);
 
-    virtual ~BinaryTreeNode();
+    virtual ~BinaryTree();
 
     // Overloaded operators
-    virtual BinaryTreeNode<T>& operator=(const BinaryTreeNode<T>& other);
+    virtual BinaryTree<T>& operator=(const BinaryTree<T>& other);
 
     virtual bool empty() const;
 
@@ -158,7 +159,7 @@ BinaryTree<T>::BinaryTree(const T& rootItem,
 }
 
 template <class T>
-BinaryTree<T>::(const BinaryTree<T>& other)
+BinaryTree<T>::BinaryTree(const BinaryTree<T>& other)
 {
     *this = other;
 }
@@ -170,7 +171,7 @@ BinaryTree<T>::~BinaryTree()
 }
 
 template <class T>
-BinaryTreeNode<T>& BinaryTree<T>::operator=(const BinaryTreeNode<T>& other)
+BinaryTree<T>& BinaryTree<T>::operator=(const BinaryTree<T>& other)
 {
     rootPtr = copyTree(other.rootPtr);
     return *this;
@@ -228,7 +229,8 @@ const T& BinaryTree<T>::getRootData() const
 {
     if (empty())   
     {
-        //TODO throw appropriate exception
+        throw std::range_error("Tried to access empty tree \
+            with BinaryTree<T>::getRootData");
     }
     else
     {
@@ -241,7 +243,8 @@ void BinaryTree<T>::setRootData(const T& rootItem)
 {
     if (empty())   
     {
-        //TODO throw appropriate exception
+        throw std::range_error("Tried to access empty tree \
+            with BinaryTree<T>::setRootData");
     }
     else
     {
@@ -408,7 +411,7 @@ BinaryTreeNode<T>* BinaryTree<T>::copyTree(const BinaryTreeNode<T>* treePtr)
         return nullptr;
     }
 
-    BinaryTreeNode<T>* newNodePtr = new BinaryTreeNode(treePtr->getItem());
+    BinaryTreeNode<T>* newNodePtr = new BinaryTreeNode<T>(treePtr->getItem());
     newNodePtr->setLeft(copyTree(treePtr->getLeft()));
     newNodePtr->setRight(copyTree(treePtr->getRight()));
 
@@ -424,7 +427,9 @@ void BinaryTree<T>::preorderHelper(void (* visit)(T&),
         return;
     }
 
-    visit(treePtr->getItem()); // TODO cannot past returned const ref to non-const ref
+    T item(treePtr->getItem());
+
+    visit(item); // ERROR cannot pass returned const ref to non-const ref?
     preorderHelper(visit, treePtr->getLeft());
     preorderHelper(visit, treePtr->getRight());
 }
@@ -438,8 +443,10 @@ void BinaryTree<T>::inorderHelper(void (* visit)(T&),
         return;
     }
 
+    T item(treePtr->getItem());
+
     inorderHelper(visit, treePtr->getLeft());
-    visit(treePtr->getItem());
+    visit(item);
     inorderHelper(visit, treePtr->getRight());    
 }
 
@@ -451,10 +458,12 @@ void BinaryTree<T>::postorderHelper(void (* visit)(T&),
     {
         return;
     }
+    
+    T item(treePtr->getItem());
 
     postorderHelper(visit, treePtr->getLeft());
     postorderHelper(visit, treePtr->getRight());
-    visit(treePtr->getItem());
+    visit(item);
 }
 
 template <class T>

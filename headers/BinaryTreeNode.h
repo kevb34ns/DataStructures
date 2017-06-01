@@ -5,9 +5,9 @@ template <class T>
 class BinaryTreeNode
 {
 private:
-   const T item;
-   Node<T>* leftPtr;
-   Node<T>* rightPtr;
+   T item;
+   BinaryTreeNode<T>* leftPtr;
+   BinaryTreeNode<T>* rightPtr;
 
 public:
    BinaryTreeNode(const T item);
@@ -47,7 +47,7 @@ template <class T>
 }
 
 template <class T>
-BinaryTreeNode<T>::~BinaryTreeNode
+BinaryTreeNode<T>::~BinaryTreeNode()
 {
 
 }
@@ -56,6 +56,12 @@ template <class T>
 const T& BinaryTreeNode<T>::getItem() const
 {
    return item;
+}
+
+template <class T>
+void BinaryTreeNode<T>::setItem(const T& newItem)
+{
+   item = T(newItem);
 }
 
 template <class T>
