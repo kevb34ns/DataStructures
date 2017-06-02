@@ -147,7 +147,7 @@ BinaryTree<T>::BinaryTree() : rootPtr(nullptr)
 template <class T>
 BinaryTree<T>::BinaryTree(const T& rootItem)
 {
-    rootPtr = new BinaryTreeNode(rootItem);
+    rootPtr = new BinaryTreeNode<T>(rootItem);
 }
 
 template <class T>
@@ -155,7 +155,7 @@ BinaryTree<T>::BinaryTree(const T& rootItem,
         const BinaryTree<T>* leftSubTreePtr,
         const BinaryTree<T>* rightSubTreePtr)
 {
-    rootPtr= new BinaryTreeNode(rootItem, leftSubTreePtr, rightSubTreePtr);
+    rootPtr= new BinaryTreeNode<T>(rootItem, leftSubTreePtr, rightSubTreePtr);
 }
 
 template <class T>
@@ -186,7 +186,7 @@ bool BinaryTree<T>::empty() const
 template <class T>
 int BinaryTree<T>::treeHeightHelper(BinaryTreeNode<T>* subTreePtr) const
 {
-    if (subTreePtr = nullptr)   
+    if (subTreePtr == nullptr)   
     {
         return 0;
     }
@@ -261,17 +261,17 @@ BinaryTreeNode<T>* BinaryTree<T>::balancedAdd(BinaryTreeNode<T>* subTreePtr,
         return newNodePtr;
     }
 
-    BinaryTreeNode<T>* leftSubTree = rootPtr->getLeft();
-    BinaryTreeNode<T>* rightSubTree = rootPtr->getRight();
+    BinaryTreeNode<T>* leftSubTree = subTreePtr->getLeft();
+    BinaryTreeNode<T>* rightSubTree = subTreePtr->getRight();
     if (treeHeightHelper(leftSubTree) > treeHeightHelper(rightSubTree))
     {
         rightSubTree = balancedAdd(rightSubTree, newNodePtr);
-        rootPtr->setRight(rightSubTree);
+        subTreePtr->setRight(rightSubTree);
     }
     else
     {
         leftSubTree = balancedAdd(leftSubTree, newNodePtr);
-        rootPtr->setLeft(leftSubTree);
+        subTreePtr->setLeft(leftSubTree);
     }
 
     return subTreePtr;
@@ -429,7 +429,7 @@ void BinaryTree<T>::preorderHelper(void (* visit)(T&),
 
     T item(treePtr->getItem());
 
-    visit(item); // ERROR cannot pass returned const ref to non-const ref?
+    visit(item);
     preorderHelper(visit, treePtr->getLeft());
     preorderHelper(visit, treePtr->getRight());
 }

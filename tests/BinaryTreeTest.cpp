@@ -12,8 +12,8 @@ TEST(BinaryTreeTest, Test1)
     tree.add(2);
     tree.add(3);
 
-    ASSERT_TRUE(tree.getNumNodes() == 3);
-    ASSERT_TRUE(tree.getTreeHeight() == 2);
+    ASSERT_EQ(tree.getNumNodes(), 3);
+    ASSERT_EQ(tree.getTreeHeight(), 2);
 
     ASSERT_TRUE(tree.remove(2));
 }
