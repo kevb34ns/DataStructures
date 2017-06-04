@@ -9,7 +9,6 @@
 
 #include "BinaryTreeNode.h"
 #include <stdexcept>
-#include <iostream> //TODO
 
 template <class T>
 class BinaryTree
