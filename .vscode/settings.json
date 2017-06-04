@@ -4,6 +4,7 @@
         "vector": "cpp",
         "list": "cpp",
         "xstring": "cpp",
-        "xiosbase": "cpp"
+        "xiosbase": "cpp",
+        "xlocale": "cpp"
     }
 }

@@ -9,6 +9,7 @@
 
 #include "BinaryTreeNode.h"
 #include <stdexcept>
+#include <iostream> //TODO
 
 template <class T>
 class BinaryTree
@@ -52,15 +53,17 @@ protected:
      * Removes a value from the tree.
      * @param subTreePtr, the root of the subtree to search.
      * @param target The data item of the node to delete.
-     * @param success True if the value existed in the tree and was removed, false otherwise.
-     * @return the root of the tree.
+     * @param success True if the value existed in the tree and was removed, 
+     *                     false otherwise.
+     * @return the root of the subtree.
      */
     virtual BinaryTreeNode<T>* removeValue(BinaryTreeNode<T>* subTreePtr,
         const T& target, bool& success);
 
     /**
      * Overwrites the value of the node pointed to by @c subTreePtr by moving 
-     * values from its descendant nodes upwards, and deletes the resulting empty leaf node.
+     * values from its descendant nodes upwards, and deletes the resulting 
+     * empty leaf node.
      * @param subTreePtr A pointer to the node with the value to be overwritten.
      * @return A pointer to the node with the old value replaced by a new one.
      */
@@ -87,17 +90,20 @@ protected:
     /**
      * Preorder traversal helper method.
      */
-    virtual void preorderHelper(void (* visit)(T&), BinaryTreeNode<T>* treePtr) const;
+    virtual void preorderHelper(void (* visit)(T&), BinaryTreeNode<T>* treePtr) 
+        const;
 
     /**
      * Inorder traversal helper method.
      */
-    virtual void inorderHelper(void (* visit)(T&), BinaryTreeNode<T>* treePtr) const;
+    virtual void inorderHelper(void (* visit)(T&), BinaryTreeNode<T>* treePtr) 
+        const;
 
     /**
      * Postorder traversal helper method.
      */
-    virtual void postorderHelper(void (* visit)(T&), BinaryTreeNode<T>* treePtr) const;
+    virtual void postorderHelper(void (* visit)(T&), BinaryTreeNode<T>* treePtr) 
+        const;
 
 public:
     // Constructors
@@ -194,7 +200,8 @@ int BinaryTree<T>::treeHeightHelper(BinaryTreeNode<T>* subTreePtr) const
     {
         int leftHeight = treeHeightHelper(subTreePtr->getLeft());
         int rightHeight = treeHeightHelper(subTreePtr->getRight());
-        return 1 + (leftHeight > rightHeight) ? leftHeight : rightHeight;
+
+        return 1 + ((leftHeight > rightHeight) ? leftHeight : rightHeight);
     }
 }
 
@@ -290,15 +297,14 @@ template <class T>
 BinaryTreeNode<T>* BinaryTree<T>::removeValue(BinaryTreeNode<T>* subTreePtr,
     const T& target, bool& success)
 {
+    //ERROR does not set nodeToRemove's parent's childptr to nullptr, causing errors
     BinaryTreeNode<T>* nodeToRemove = findNode(subTreePtr, target, success);
     if (success)
     {
-        return moveValuesUpTree(nodeToRemove);
+        nodeToRemove = moveValuesUpTree(nodeToRemove);
     }
-    else 
-    {
-        return subTreePtr;
-    }
+    
+    return subTreePtr;
 }
 
 template <class T>
