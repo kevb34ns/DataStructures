@@ -23,7 +23,14 @@ TEST(BinaryTreeTest, Test1)
     EXPECT_FALSE(tree.empty());
     tree.setRootData(6);
     ASSERT_EQ(tree.getRootData(), 6);
+
+    tree.clear();
+    EXPECT_TRUE(tree.empty());
 }
+
+// TODO traversal test
+
+// TODO copy constructor/assignment operator test
 
 int main (int argc, char** argv)
 {

@@ -297,11 +297,27 @@ template <class T>
 BinaryTreeNode<T>* BinaryTree<T>::removeValue(BinaryTreeNode<T>* subTreePtr,
     const T& target, bool& success)
 {
-    //ERROR does not set nodeToRemove's parent's childptr to nullptr, causing errors
-    BinaryTreeNode<T>* nodeToRemove = findNode(subTreePtr, target, success);
-    if (success)
+    if (subTreePtr == nullptr)
     {
-        nodeToRemove = moveValuesUpTree(nodeToRemove);
+        return nullptr;
+    }
+
+    if (subTreePtr->getItem() == target)
+    {
+        success = true;
+        subTreePtr = moveValuesUpTree(subTreePtr);
+        return subTreePtr;
+    }
+
+    BinaryTreeNode<T>* leftPtr = removeValue(subTreePtr->getLeft(), 
+                                             target, success);
+    subTreePtr->setLeft(leftPtr);
+    
+    if (!success)
+    {
+        BinaryTreeNode<T>* rightPtr = removeValue(subTreePtr->getRight(), 
+                                                  target, success);
+        subTreePtr->setRight(rightPtr);
     }
     
     return subTreePtr;
