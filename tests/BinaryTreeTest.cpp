@@ -6,7 +6,6 @@ class BinaryTreeTest : public ::testing::Test
 {
 protected:
     BinaryTree<int>* tree;
-    std::vector<int> vec;
 
     BinaryTreeTest()
     {
@@ -19,9 +18,24 @@ protected:
     }
 
 public:
-    void visit(int& item)
+    std::vector<int> vec;
+
+};
+
+class TestTraversal : public TraversalFunction<int>
+{
+private:
+    BinaryTreeTest* mParent;
+
+public:
+    TestTraversal(BinaryTreeTest* parent)
     {
-        vec.push_back(item);
+        mParent = parent;
+    }
+
+    virtual void visit(int& item)
+    {
+        mParent->vec.push_back(item);
     }
 };
 
@@ -55,12 +69,43 @@ TEST_F(BinaryTreeTest, TraversalTest)
     tree->add(2);
     tree->add(3);
     tree->add(4);
+    tree->add(5);
+    tree->add(6);
+    tree->add(7);
+    tree->add(8);
+    tree->add(9);
+    tree->add(10);
 
-    // TODO need to pass a function pointer/change traversal methods because you can't have a function pointer that can reference vec to add the items
+    ASSERT_EQ(tree->getNumNodes(), 10);
+
+    int preorder[] = { 1, 2, 4, 7, 6, 10, 3, 5, 9, 8 };
+    int inorder[] = { 7, 4, 2, 10, 6, 1, 9, 5, 3, 8 };
+    int postorder[] = { 7, 4, 10, 6, 2, 9, 5, 8, 3, 1 };
+
+    TestTraversal* func = new TestTraversal(this);
+
+    tree->preorderTraverse(func);
     for (int i = 0; i < vec.size(); i++)
     {
-        std::cout << "item: " << vec[i] << std::endl;
+        EXPECT_EQ(vec[i], preorder[i]);
     }
+    vec.clear();
+
+    tree->inorderTraverse(func);
+    for (int i = 0; i < vec.size(); i++)
+    {
+        EXPECT_EQ(vec[i], inorder[i]);
+    }
+    vec.clear();
+
+    tree->postorderTraverse(func);
+    for (int i = 0; i < vec.size(); i++)
+    {
+        EXPECT_EQ(vec[i], postorder[i]);
+    }
+    vec.clear();
+
+    delete func;
 }
 
 TEST_F(BinaryTreeTest, CopyTest)

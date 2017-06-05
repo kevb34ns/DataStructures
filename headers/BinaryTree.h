@@ -10,6 +10,24 @@
 #include "BinaryTreeNode.h"
 #include <stdexcept>
 
+/**
+ * @class TraversalFunction
+ * @brief A functional interface used with the @c BinaryTree traversal methods.
+ * 
+ * Pass an object derived from this abstract class to the traversal methods.
+ * The traversal method will call @c TraversalFunction::visit at each node.
+ */
+template <class T>
+class TraversalFunction
+{
+public:
+    /**
+     * The function called at each node of the tree.
+     * @param item The data item held by the node.
+     */
+    virtual void visit(T& item) = 0;
+};
+
 template <class T>
 class BinaryTree
 {
@@ -89,20 +107,20 @@ protected:
     /**
      * Preorder traversal helper method.
      */
-    virtual void preorderHelper(void (* visit)(T&), BinaryTreeNode<T>* treePtr) 
-        const;
+    virtual void preorderHelper(TraversalFunction<T>* func, 
+        BinaryTreeNode<T>* treePtr) const;
 
     /**
      * Inorder traversal helper method.
      */
-    virtual void inorderHelper(void (* visit)(T&), BinaryTreeNode<T>* treePtr) 
-        const;
+    virtual void inorderHelper(TraversalFunction<T>* func, 
+        BinaryTreeNode<T>* treePtr) const;
 
     /**
      * Postorder traversal helper method.
      */
-    virtual void postorderHelper(void (* visit)(T&), BinaryTreeNode<T>* treePtr) 
-        const;
+    virtual void postorderHelper(TraversalFunction<T>* func, 
+        BinaryTreeNode<T>* treePtr) const;
 
 public:
     // Constructors
@@ -137,9 +155,9 @@ public:
     virtual void clear();
 
     // Traversal operations
-    virtual void preorderTraverse(void (* visit)(T&)) const; 
-    virtual void inorderTraverse(void (* visit)(T&)) const;
-    virtual void postorderTraverse(void (* visit)(T&)) const;
+    virtual void preorderTraverse(TraversalFunction<T>* func) const; 
+    virtual void inorderTraverse(TraversalFunction<T>* func) const;
+    virtual void postorderTraverse(TraversalFunction<T>* func) const;
    
 };
 
@@ -440,7 +458,7 @@ BinaryTreeNode<T>* BinaryTree<T>::copyTree(const BinaryTreeNode<T>* treePtr)
 }
 
 template <class T>
-void BinaryTree<T>::preorderHelper(void (* visit)(T&), 
+void BinaryTree<T>::preorderHelper(TraversalFunction<T>* func, 
     BinaryTreeNode<T>* treePtr) const
 {
     if (treePtr == nullptr)
@@ -450,13 +468,13 @@ void BinaryTree<T>::preorderHelper(void (* visit)(T&),
 
     T item(treePtr->getItem());
 
-    visit(item);
-    preorderHelper(visit, treePtr->getLeft());
-    preorderHelper(visit, treePtr->getRight());
+    func->visit(item);
+    preorderHelper(func, treePtr->getLeft());
+    preorderHelper(func, treePtr->getRight());
 }
 
 template <class T>
-void BinaryTree<T>::inorderHelper(void (* visit)(T&), 
+void BinaryTree<T>::inorderHelper(TraversalFunction<T>* func, 
     BinaryTreeNode<T>* treePtr) const
 {
     if (treePtr == nullptr)
@@ -466,13 +484,13 @@ void BinaryTree<T>::inorderHelper(void (* visit)(T&),
 
     T item(treePtr->getItem());
 
-    inorderHelper(visit, treePtr->getLeft());
-    visit(item);
-    inorderHelper(visit, treePtr->getRight());    
+    inorderHelper(func, treePtr->getLeft());
+    func->visit(item);
+    inorderHelper(func, treePtr->getRight());    
 }
 
 template <class T>
-void BinaryTree<T>::postorderHelper(void (* visit)(T&), 
+void BinaryTree<T>::postorderHelper(TraversalFunction<T>* func, 
     BinaryTreeNode<T>* treePtr) const
 {
     if (treePtr == nullptr)
@@ -482,27 +500,27 @@ void BinaryTree<T>::postorderHelper(void (* visit)(T&),
     
     T item(treePtr->getItem());
 
-    postorderHelper(visit, treePtr->getLeft());
-    postorderHelper(visit, treePtr->getRight());
-    visit(item);
+    postorderHelper(func, treePtr->getLeft());
+    postorderHelper(func, treePtr->getRight());
+    func->visit(item);
 }
 
 template <class T>
-void BinaryTree<T>::preorderTraverse(void (* visit)(T&)) const
+void BinaryTree<T>::preorderTraverse(TraversalFunction<T>* func) const
 {
-    preorderHelper(visit, rootPtr);
+    preorderHelper(func, rootPtr);
 }
 
 template <class T>
-void BinaryTree<T>::inorderTraverse(void (* visit)(T&)) const
+void BinaryTree<T>::inorderTraverse(TraversalFunction<T>* func) const
 {
-    inorderHelper(visit, rootPtr);
+    inorderHelper(func, rootPtr);
 }
 
 template <class T>
-void BinaryTree<T>::postorderTraverse(void (* visit)(T&)) const
+void BinaryTree<T>::postorderTraverse(TraversalFunction<T>* func) const
 {
-    postorderHelper(visit, rootPtr);
+    postorderHelper(func, rootPtr);
 }
 
 #endif
