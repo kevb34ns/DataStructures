@@ -31,60 +31,59 @@ public:
 template <class T>
 class BinaryTree
 {
-private:
+protected:
     BinaryTreeNode<T>* rootPtr;
 
-protected:
     /** 
      * Recursively calculates the height of the tree.
-     * @param subTreePtr the root of the subtree to calculate the height of.
-     * @return the height of the tree rooted at @c subTreePtr.
+     * @param subtreePtr the root of the subtree to calculate the height of.
+     * @return the height of the tree rooted at @c subtreePtr.
      */
-    virtual int treeHeightHelper(BinaryTreeNode<T>* subTreePtr) const;
+    virtual int treeHeightHelper(BinaryTreeNode<T>* subtreePtr) const;
 
     /**
      * Recursively find the number of nodes in the tree.
-     * @param subTreePtr the root of the subtree to act on.
-     * @return the number of nodes in the tree rooted at @c subTreePtr.
+     * @param subtreePtr the root of the subtree to act on.
+     * @return the number of nodes in the tree rooted at @c subtreePtr.
      */
-    virtual int numNodesHelper(BinaryTreeNode<T>* subTreePtr) const;
+    virtual int numNodesHelper(BinaryTreeNode<T>* subtreePtr) const;
     
     /**
      * Deletes each node in the tree, including the root.
      * @param the root of the subtree to be deleted.
      * @note uses postorder traversal.
      */
-    virtual void destroyTree(BinaryTreeNode<T>* subTreePtr);
+    virtual void destroyTree(BinaryTreeNode<T>* subtreePtr);
 
     /**
      * Recursively adds a new node to the tree in a balanced manner, 
      * by adding to the shorter of the root node’s two subtrees.
-     * @param subTreePtr the root of the tree to add to.
+     * @param subtreePtr the root of the tree to add to.
      * @param newNodePtr the new node to add.
      * @return the root of the tree.
      */
-    virtual BinaryTreeNode<T>* balancedAdd(BinaryTreeNode<T>* subTreePtr,
+    virtual BinaryTreeNode<T>* addHelper(BinaryTreeNode<T>* subtreePtr,
         BinaryTreeNode<T>* newNodePtr);
 
     /**
      * Removes a value from the tree.
-     * @param subTreePtr, the root of the subtree to search.
+     * @param subtreePtr, the root of the subtree to search.
      * @param target The data item of the node to delete.
      * @param success True if the value existed in the tree and was removed, 
      *                     false otherwise.
      * @return the root of the subtree.
      */
-    virtual BinaryTreeNode<T>* removeValue(BinaryTreeNode<T>* subTreePtr,
+    virtual BinaryTreeNode<T>* removeHelper(BinaryTreeNode<T>* subtreePtr,
         const T& target, bool& success);
 
     /**
-     * Overwrites the value of the node pointed to by @c subTreePtr by moving 
-     * values from its descendant nodes upwards, and deletes the resulting 
+     * Overwrites the data item of the node pointed to by @c subtreePtr by 
+     * moving items from its descendant nodes upwards, and deletes the resulting 
      * empty leaf node.
-     * @param subTreePtr A pointer to the node with the value to be overwritten.
+     * @param subtreePtr A pointer to the node with the value to be overwritten.
      * @return A pointer to the node with the old value replaced by a new one.
      */
-    virtual BinaryTreeNode<T>* moveValuesUpTree(BinaryTreeNode<T>* subTreePtr);
+    virtual BinaryTreeNode<T>* shiftItemsUp(BinaryTreeNode<T>* subtreePtr);
 
     /**
      * Searches for a node with the specified value.
@@ -127,8 +126,8 @@ public:
     BinaryTree();
     BinaryTree(const T& rootItem);
     BinaryTree(const T& rootItem, 
-        const BinaryTree<T>* leftSubTreePtr,
-        const BinaryTree<T>* rightSubTreePtr);
+        const BinaryTree<T>* leftSubtreePtr,
+        const BinaryTree<T>* rightSubtreePtr);
     BinaryTree(const BinaryTree<T>& other);
 
     virtual ~BinaryTree();
@@ -150,7 +149,7 @@ public:
 
     virtual bool remove(const T& item);
 
-    virtual bool contains(const T& item);
+    virtual bool contains(const T& item) const;
 
     virtual void clear();
 
@@ -175,10 +174,10 @@ BinaryTree<T>::BinaryTree(const T& rootItem)
 
 template <class T>
 BinaryTree<T>::BinaryTree(const T& rootItem, 
-        const BinaryTree<T>* leftSubTreePtr,
-        const BinaryTree<T>* rightSubTreePtr)
+        const BinaryTree<T>* leftSubtreePtr,
+        const BinaryTree<T>* rightSubtreePtr)
 {
-    rootPtr= new BinaryTreeNode<T>(rootItem, leftSubTreePtr, rightSubTreePtr);
+    rootPtr= new BinaryTreeNode<T>(rootItem, leftSubtreePtr, rightSubtreePtr);
 }
 
 template <class T>
@@ -207,16 +206,16 @@ bool BinaryTree<T>::empty() const
 }
 
 template <class T>
-int BinaryTree<T>::treeHeightHelper(BinaryTreeNode<T>* subTreePtr) const
+int BinaryTree<T>::treeHeightHelper(BinaryTreeNode<T>* subtreePtr) const
 {
-    if (subTreePtr == nullptr)   
+    if (subtreePtr == nullptr)   
     {
         return 0;
     }
     else
     {
-        int leftHeight = treeHeightHelper(subTreePtr->getLeft());
-        int rightHeight = treeHeightHelper(subTreePtr->getRight());
+        int leftHeight = treeHeightHelper(subtreePtr->getLeft());
+        int rightHeight = treeHeightHelper(subtreePtr->getRight());
 
         return 1 + ((leftHeight > rightHeight) ? leftHeight : rightHeight);
     }
@@ -229,16 +228,16 @@ int BinaryTree<T>::getTreeHeight() const
 }
 
 template <class T>
-int BinaryTree<T>::numNodesHelper(BinaryTreeNode<T>* subTreePtr) const
+int BinaryTree<T>::numNodesHelper(BinaryTreeNode<T>* subtreePtr) const
 {
-    if (subTreePtr == nullptr)   
+    if (subtreePtr == nullptr)   
     {
         return 0;
     }
     else
     {
-        return 1 + numNodesHelper(subTreePtr->getLeft()) + 
-            numNodesHelper(subTreePtr->getRight());
+        return 1 + numNodesHelper(subtreePtr->getLeft()) + 
+            numNodesHelper(subtreePtr->getRight());
     }
 }
 
@@ -277,111 +276,111 @@ void BinaryTree<T>::setRootData(const T& rootItem)
 }
 
 template <class T>
-BinaryTreeNode<T>* BinaryTree<T>::balancedAdd(BinaryTreeNode<T>* subTreePtr,
+BinaryTreeNode<T>* BinaryTree<T>::addHelper(BinaryTreeNode<T>* subtreePtr,
     BinaryTreeNode<T>* newNodePtr)
 {
-    if (subTreePtr == nullptr)
+    if (subtreePtr == nullptr)
     {
         return newNodePtr;
     }
 
-    BinaryTreeNode<T>* leftSubTree = subTreePtr->getLeft();
-    BinaryTreeNode<T>* rightSubTree = subTreePtr->getRight();
+    BinaryTreeNode<T>* leftSubTree = subtreePtr->getLeft();
+    BinaryTreeNode<T>* rightSubTree = subtreePtr->getRight();
     if (treeHeightHelper(leftSubTree) > treeHeightHelper(rightSubTree))
     {
-        rightSubTree = balancedAdd(rightSubTree, newNodePtr);
-        subTreePtr->setRight(rightSubTree);
+        rightSubTree = addHelper(rightSubTree, newNodePtr);
+        subtreePtr->setRight(rightSubTree);
     }
     else
     {
-        leftSubTree = balancedAdd(leftSubTree, newNodePtr);
-        subTreePtr->setLeft(leftSubTree);
+        leftSubTree = addHelper(leftSubTree, newNodePtr);
+        subtreePtr->setLeft(leftSubTree);
     }
 
-    return subTreePtr;
+    return subtreePtr;
 }
 
 template <class T>
 bool BinaryTree<T>::add(const T& item)
 {
     BinaryTreeNode<T>* newNodePtr = new BinaryTreeNode<T>(item);
-    rootPtr = balancedAdd(rootPtr, newNodePtr);
+    rootPtr = addHelper(rootPtr, newNodePtr);
 
     return rootPtr != nullptr;
 }
 
 template <class T>
-BinaryTreeNode<T>* BinaryTree<T>::removeValue(BinaryTreeNode<T>* subTreePtr,
+BinaryTreeNode<T>* BinaryTree<T>::removeHelper(BinaryTreeNode<T>* subtreePtr,
     const T& target, bool& success)
 {
-    if (subTreePtr == nullptr)
+    if (subtreePtr == nullptr)
     {
         return nullptr;
     }
 
-    if (subTreePtr->getItem() == target)
+    if (subtreePtr->getItem() == target)
     {
         success = true;
-        subTreePtr = moveValuesUpTree(subTreePtr);
-        return subTreePtr;
+        subtreePtr = shiftItemsUp(subtreePtr);
+        return subtreePtr;
     }
 
-    BinaryTreeNode<T>* leftPtr = removeValue(subTreePtr->getLeft(), 
+    BinaryTreeNode<T>* leftPtr = removeHelper(subtreePtr->getLeft(), 
                                              target, success);
-    subTreePtr->setLeft(leftPtr);
+    subtreePtr->setLeft(leftPtr);
     
     if (!success)
     {
-        BinaryTreeNode<T>* rightPtr = removeValue(subTreePtr->getRight(), 
+        BinaryTreeNode<T>* rightPtr = removeHelper(subtreePtr->getRight(), 
                                                   target, success);
-        subTreePtr->setRight(rightPtr);
+        subtreePtr->setRight(rightPtr);
     }
     
-    return subTreePtr;
+    return subtreePtr;
 }
 
 template <class T>
-BinaryTreeNode<T>* BinaryTree<T>::moveValuesUpTree(
-    BinaryTreeNode<T>* subTreePtr)
+BinaryTreeNode<T>* BinaryTree<T>::shiftItemsUp(
+    BinaryTreeNode<T>* subtreePtr)
 {
-    if (subTreePtr == nullptr)
+    if (subtreePtr == nullptr)
     {
-        return subTreePtr;
+        return subtreePtr;
     }
 
-    BinaryTreeNode<T>* leftSubTree = subTreePtr->getLeft();
-    BinaryTreeNode<T>* rightSubTree = subTreePtr->getRight();
+    BinaryTreeNode<T>* leftSubTree = subtreePtr->getLeft();
+    BinaryTreeNode<T>* rightSubTree = subtreePtr->getRight();
 
     if (leftSubTree == nullptr && rightSubTree == nullptr)
     {
-        delete subTreePtr;
-        subTreePtr = nullptr;
-        return subTreePtr;
+        delete subtreePtr;
+        subtreePtr = nullptr;
+        return subtreePtr;
     }
 
     if (treeHeightHelper(leftSubTree) > treeHeightHelper(rightSubTree))
     {
         // move value from left subtree
-        subTreePtr->setItem(leftSubTree->getItem());
-        leftSubTree = moveValuesUpTree(leftSubTree);
-        subTreePtr->setLeft(leftSubTree);
+        subtreePtr->setItem(leftSubTree->getItem());
+        leftSubTree = shiftItemsUp(leftSubTree);
+        subtreePtr->setLeft(leftSubTree);
     }
     else 
     {
         // move value from right subtree
-        subTreePtr->setItem(rightSubTree->getItem());
-        rightSubTree = moveValuesUpTree(rightSubTree);
-        subTreePtr->setRight(rightSubTree);
+        subtreePtr->setItem(rightSubTree->getItem());
+        rightSubTree = shiftItemsUp(rightSubTree);
+        subtreePtr->setRight(rightSubTree);
     }
 
-    return subTreePtr;
+    return subtreePtr;
 }
 
 template <class T>
 bool BinaryTree<T>::remove(const T& item)
 {
     bool success = false;
-    rootPtr = removeValue(rootPtr, item, success);
+    rootPtr = removeHelper(rootPtr, item, success);
 
     return success;
 }
@@ -412,7 +411,7 @@ BinaryTreeNode<T>* BinaryTree<T>::findNode(BinaryTreeNode<T>* treePtr,
 }
 
 template <class T>
-bool BinaryTree<T>::contains(const T& item)
+bool BinaryTree<T>::contains(const T& item) const
 {
     bool success = false;
     findNode(rootPtr, item, success);
@@ -421,17 +420,17 @@ bool BinaryTree<T>::contains(const T& item)
 }
 
 template <class T>
-void BinaryTree<T>::destroyTree(BinaryTreeNode<T>* subTreePtr)
+void BinaryTree<T>::destroyTree(BinaryTreeNode<T>* subtreePtr)
 {
-    if (subTreePtr == nullptr)
+    if (subtreePtr == nullptr)
     {
         return;
     }
 
-    destroyTree(subTreePtr->getLeft());
-    destroyTree(subTreePtr->getRight());
-    delete subTreePtr;
-    subTreePtr = nullptr;
+    destroyTree(subtreePtr->getLeft());
+    destroyTree(subtreePtr->getRight());
+    delete subtreePtr;
+    subtreePtr = nullptr;
 }
 
 template <class T>
