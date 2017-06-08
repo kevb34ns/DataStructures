@@ -27,18 +27,40 @@ private:
             BinaryTreeNode<T>* newNodePtr, bool& success);
 
     /**
-     * TODO doc
+     * @brief Removes the leftmost ancestor of a node, in order to facilitate 
+     * removal of a node with two children. 
+     * 
+     * For the parent of @c nodePtr, theleftmost ancestor of @c nodePtr is its
+     * inorder successor in the BST. In a sorted list of all the values in the
+     * BST, the inorder successor of some value x is the value immediately
+     * following x.
+     * 
+     * @param nodePtr The node whose leftmost ancestor will be removed, which is
+     *                assumed to be non-null.
+     * @param inorderSuccessr A reference to a variable of type T, which will be
+     *                        set to the value of the leftmost ancestor.
+     * @return a pointer to the location of the removed node, which should be
+     *         @c nullptr.
      */
-    virtual BinaryTreeNode<T>* removeLeftmostNode(BinaryTreeNode<T>* nodePtr,
-            T& inorderSuccessor);
+    virtual BinaryTreeNode<T>* removeLeftmostAncestor(
+            BinaryTreeNode<T>* nodePtr, T& inorderSuccessor);
     
     /**
-     * TODO doc
+     * Removes the specified node from the tree, while maintaining the sorted
+     * nature of the BST.
+     * @param nodePtr The node to remove.
+     * @return A pointer to the node now located at the position previously
+     *         occupied by @c nodePtr, or @c nullptr if there is no node there.
      */
     virtual BinaryTreeNode<T>* removeNode(BinaryTreeNode<T>* nodePtr);
 
     /**
-     * TODO doc
+     * Recursively removes a node with the target value, if it exists.
+     * @param subtreePtr Pointer to the root of the subtree to search.
+     * @param target The target value to remove.
+     * @param success A boolean reference, which is set to true if the target
+     *                exists and was removed, or false otherwise.
+     * @return A pointer to root of the subtree.
      */
     virtual BinaryTreeNode<T>* removeHelper(BinaryTreeNode<T>* subtreePtr,
             const T& target, bool& success);
@@ -72,7 +94,9 @@ public:
     virtual bool add(const T& item);
 
     /**
-     * TODO doc
+     * Removes a node from the tree with the specified value, if it exists.
+     * @param target The target value to search for.
+     * @return true if a node was removed, false otherwise.
      */
     virtual bool remove(const T& target);
 
@@ -166,23 +190,84 @@ bool BinarySearchTree<T>::add(const T& item)
 }
 
 template <class T>
-BinaryTreeNode<T>* BinarySearchTree<T>::removeLeftmostNode(
+BinaryTreeNode<T>* BinarySearchTree<T>::removeLeftmostAncestor(
             BinaryTreeNode<T>* nodePtr, T& inorderSuccessor)
 {
+    if (nodePtr->getLeft() == nullptr)
+    {
+        inorderSuccessor = nodePtr->getItem();
+        return removeNode(nodePtr);
+    }
 
+    return removeLeftmostAncestor(nodePtr->getLeft(), inorderSuccessor);
 }
 
 template <class T>
 BinaryTreeNode<T>* BinarySearchTree<T>::removeNode(BinaryTreeNode<T>* nodePtr)
 {
+    if (nodePtr == nullptr)
+    {
+        return nullptr;
+    }
 
+    BinaryTreeNode<T>* leftPtr = nodePtr->getLeft();
+    BinaryTreeNode<T>* rightPtr = nodePtr->getRight();
+
+    if (!leftPtr && !rightPtr)
+    {
+        delete nodePtr;
+        return nullptr;
+    }
+    else if (!leftPtr)
+    {
+        BinaryTreeNode<T>* rightPtr = nodePtr->getRight();
+        delete nodePtr;
+        return rightPtr;
+    }
+    else if (!rightPtr)
+    {
+        BinaryTreeNode<T>* leftPtr = nodePtr->getLeft();
+        delete nodePtr;
+        return leftPtr;
+    }
+    else
+    {
+        T& inorderSuccessor;
+        removeLeftmostAncestor(nodePtr->getRight(), inorderSuccessor);
+        nodePtr->setItem(inorderSuccessor);
+    }
 }
 
 template <class T>
 BinaryTreeNode<T>* BinarySearchTree<T>::removeHelper(
         BinaryTreeNode<T>* subtreePtr, const T& target, bool& success)
 {
+    if (subtreePtr == nullptr)
+    {
+        success = false;
+        return nullptr;
+    }
 
+    if (subtreePtr->getItem() == target)
+    {
+        success = true;
+        return removeNode(subtreePtr);
+    }
+
+    if (subtreePtr->getItem() > target)
+    {
+        BinaryTreeNode<T>* nodePtr = 
+                removeHelper(subtreePtr->getLeft(), target, success);
+        subtreePtr->setLeft(nodePtr);
+    }
+    else
+    {
+        BinaryTreeNode<T>* nodePtr = 
+                removeHelper(subtreePtr->getRight(), target, success);
+        subtreePtr->setRight(nodePtr);
+    }
+
+    return subtreePtr;
 }
 
 template <class T>
@@ -215,7 +300,7 @@ BinaryTreeNode<T>* BinarySearchTree<T>::containsHelper(
     
     if (subTreePtr->getItem() < target)
     {
-        return containsHelper(subtreePTr->getRight(), target, success);
+        return containsHelper(subtreePtr->getRight(), target, success);
     }
 
     // if this point is reached, there were duplicate items in the tree.
