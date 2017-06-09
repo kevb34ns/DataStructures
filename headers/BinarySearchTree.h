@@ -118,7 +118,7 @@ public:
 };
 
 template <class T>
-BinarySearchTree<T>::BinarySearchTree() : rootPtr(nullptr)
+BinarySearchTree<T>::BinarySearchTree()
 {
 
 }
@@ -138,7 +138,7 @@ BinarySearchTree<T>::BinarySearchTree(const BinarySearchTree<T>& other)
 template <class T>
 BinarySearchTree<T>::~BinarySearchTree()
 {
-    clear();
+    
 }
 
 template <class T>
@@ -164,13 +164,13 @@ BinaryTreeNode<T>* BinarySearchTree<T>::orderedInsert(
     {
         BinaryTreeNode<T>* nodePtr = orderedInsert(subtreePtr->getLeft(),
                 newNodePtr, success);
-        subTreePtr->setLeft(nodePtr);
+        subtreePtr->setLeft(nodePtr);
     }
     else if (subtreePtr->getItem() < newNodePtr->getItem())
     {
         BinaryTreeNode<T>* nodePtr = orderedInsert(subtreePtr->getRight(),
                 newNodePtr, success);
-        subTreePtr->setRight(nodePtr);
+        subtreePtr->setRight(nodePtr);
     }
     else
     {
@@ -199,7 +199,10 @@ BinaryTreeNode<T>* BinarySearchTree<T>::removeLeftmostAncestor(
         return removeNode(nodePtr);
     }
 
-    return removeLeftmostAncestor(nodePtr->getLeft(), inorderSuccessor);
+    BinaryTreeNode<T>* leftPtr = removeLeftmostAncestor(
+            nodePtr->getLeft(), inorderSuccessor);
+    nodePtr->setLeft(leftPtr);
+    return nodePtr;
 }
 
 template <class T>
@@ -232,9 +235,12 @@ BinaryTreeNode<T>* BinarySearchTree<T>::removeNode(BinaryTreeNode<T>* nodePtr)
     }
     else
     {
-        T& inorderSuccessor;
-        removeLeftmostAncestor(nodePtr->getRight(), inorderSuccessor);
+        T inorderSuccessor;
+        BinaryTreeNode<T>* rightPtr = removeLeftmostAncestor(
+                nodePtr->getRight(), inorderSuccessor);
+        nodePtr->setRight(rightPtr);
         nodePtr->setItem(inorderSuccessor);
+        return nodePtr;
     }
 }
 
@@ -287,20 +293,19 @@ BinaryTreeNode<T>* BinarySearchTree<T>::containsHelper(
         return nullptr;
     }
 
-    if (subTreePtr->getItem() == target)
+    if (subtreePtr->getItem() == target)
     {
-        success = true;
-        return subTreePtr;
+        return subtreePtr;
     }
 
-    if (subTreePtr->getItem() > target)
+    if (subtreePtr->getItem() > target)
     {
-        return containsHelper(subtreePtr->getLeft(), target, success);
+        return containsHelper(subtreePtr->getLeft(), target);
     }
     
-    if (subTreePtr->getItem() < target)
+    if (subtreePtr->getItem() < target)
     {
-        return containsHelper(subtreePtr->getRight(), target, success);
+        return containsHelper(subtreePtr->getRight(), target);
     }
 
     // if this point is reached, there were duplicate items in the tree.
@@ -310,7 +315,7 @@ BinaryTreeNode<T>* BinarySearchTree<T>::containsHelper(
 template <class T>
 bool BinarySearchTree<T>::contains(const T& item) const
 {
-    return containsHelper(rootPtr, item, success) != nullptr;
+    return containsHelper(rootPtr, item) != nullptr;
 }
 
 template <class T>

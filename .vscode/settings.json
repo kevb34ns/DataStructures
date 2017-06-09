@@ -5,6 +5,11 @@
         "list": "cpp",
         "xstring": "cpp",
         "xiosbase": "cpp",
-        "xlocale": "cpp"
+        "xlocale": "cpp",
+        "functional": "cpp",
+        "ios": "cpp",
+        "system_error": "cpp",
+        "xtree": "cpp",
+        "algorithm": "cpp"
     }
 }
