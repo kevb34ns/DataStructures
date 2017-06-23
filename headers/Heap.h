@@ -2,6 +2,9 @@
  * Array-based Binary Max-heap Implementation
  */
 
+#include <stdexcept>
+#include <cmath>
+
 template <class T>
 class Heap
 {
@@ -16,21 +19,24 @@ private:
     /**
      * Calculate the index of the left child of an item in the array.
      * @param parentIndex The index of the parent.
-     * @return the index of the left child of the specified item. 
+     * @return the index of the left child of the specified item, or -1 if the
+     *         item was invalid or has no left child. 
      */
     virtual int getLeftChildIndex(const int parentIndex) const;
 
     /**
      * Calculate the index of the right child of an item in the array.
      * @param parentIndex The index of the parent.
-     * @return the index of the right child of the specified item. 
+     * @return the index of the right child of the specified item, or -1 if the
+     *         item was invalid or has no right child. 
      */
     virtual int getRightChildIndex(const int parentIndex) const;
 
     /**
      * Calculate the index of the parent of an item in the array.
      * @param childIndex The index of the child.
-     * @return the index of the parent of the specified item.
+     * @return the index of the parent of the specified item, or -1 if the item
+     *         was invalid or has no parent.
      */
     virtual int getParentIndex(const int childIndex) const;
 
@@ -40,6 +46,13 @@ private:
      * @return true if the node is a leaf, false otherwise.
      */
     virtual bool isLeaf(const int index) const;
+
+    /**
+     * Swaps two elements in the heap.
+     * @param index1 The index of the first element to swap.
+     * @param index2 The index of the second element to swap.
+     */
+    virtual void swap(int index1, int index2);
 
     /**
      * Uses the recursive "trickle-down" method to move a node to its correct
@@ -52,15 +65,21 @@ private:
     virtual void heapRebuild(int subtreeIndex);
 
     /**
-     * Creates a valid heap out of an arbitrarily ordered array.
-     * @param array A pointer to the array of T which will be transformed into
-     * a heap.
+     * Transforms an arbitrarily ordered array into a heap.
      */
-    virtual void heapCreate(T* array);
+    virtual void heapify();
 
 public:
-    Heap();
-    Heap(T* array, const int size);
+    Heap(); ///< Default constructor
+
+    /**
+     * A constructor which takes an array, copies it, and transforms it into a
+     * heap.
+     * @param array The array to copy and transform.
+     * @param size The number of items in the array.
+     */
+    Heap(const T* array, const int size);
+
     virtual ~Heap();
 
     /**
@@ -110,81 +129,151 @@ public:
 };
 
 template <class T>j
-Heap<T>::Heap()
+Heap<T>::Heap() : itemCount(0), capcity(DEFAULT_CAPACITY)
 {
-
+    items = new T[capacity];
 }
 
 template <class T>j
-Heap<T>::Heap(int* array, const int size)
+Heap<T>::Heap(const T* array, const int size) : capacity(size)
 {
+    items = new T[size];
+    for (int i = 0; i < size; i++)
+    {
+        items[i] = array[i];
+    }
 
+    heapify();
 }
 
 template <class T>j
 Heap<T>::~Heap()
 {
-
+    clear();
 }
 
 template <class T>j
 int Heap<T>::getLeftChildIndex(const int parentIndex) const
 {
+    if (parentIndex < 0)
+    {
+        return -1;
+    }
 
+    int leftChildIndex = parentIndex * 2 + 1;
+    return (leftChildIndex < itemCount) ? leftChildIndex : -1;
 }
 
 template <class T>j
 int Heap<T>::getRightChildIndex(const int parentIndex) const
 {
+    if (parentIndex < 0)
+    {
+        return -1;
+    }
 
+    int rightChildIndex = parentIndex * 2 + 2;
+    return (rightChildIndex < itemCount) ? rightChildIndex : -1;
 }
 
 template <class T>j
 int Heap<T>::getParentIndex(const int childIndex) const
 {
+    if (childIndex <= 0 || childIndex >= itemCount)
+    {
+        return -1;
+    }
 
+    int parentIndex = childIndex / 2 - 1;
+    return parentIndex;
 }
 
 template <class T>
 bool Heap<T>::isLeaf(const int index) const
 {
+    if (getLeftChildIndex(index) == -1 &&
+        getRightChildIndex(index) == -1)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
 
+template <class T>
+void Heap<T>::swap(int index1, int index2)
+{
+    T temp = items[index1];
+    items[index1] = items[index2];
+    items[index2] = temp;
 }
 
 template <class T>
 void Heap<T>::heapRebuild(int subtreeIndex)
 {
+    if (subtreeIndex < 0 || subtreeIndex >= itemCount)
+    {
+        throw std::range_error("Passed an invalid index parameter to\
+                                Heap<T>::heapRebuild.");
+    }
 
+    int left = getLeftChildIndex(subtreeIndex);
+    int right = getRightChildIndex(subtreeIndex);
+    
+    if (isLeaf(subtreeIndex) || (items[subtreeIndex] >= left && 
+                                 items[subtreeIndex] >= right))
+    {
+        return;
+    }
+
+    if (left >= right)
+    {
+        swap(subtreeIndex, left);
+        heapRebuild(left);
+    }
+    else
+    {
+        swap(subtreeIndex, right);
+        heapRebuild(right);
+    }
 }
 
 template <class T>
-void Heap<T>::heapCreate()
+void Heap<T>::heapify()
 {
-
+    //TODO see notes
 }
 
 template <class T>
 bool Heap<T>::isEmpty() const
 {
-
+    return itemCount == 0;
 }
 
 template <class T>
 int Heap<T>::getNumNodes() const
 {
-
+    return itemCount;
 }
 
 template <class T>
 int Heap<T>::getHeight() const
 {
-
+    return ceil(log2(itemCount));
 }
 
 template <class T>
 const T& Heap<T>::peekTop() const
 {
+    if (isEmpty())
+    {
+        throw std::range_error("Tried to call Heap<T>::peekTop() on an empty \
+                                heap.");
+    }
 
+    return items[0];
 }
 
 template <class T>
@@ -202,5 +291,7 @@ bool Heap<T>::remove()
 template <class T>
 void Heap<T>::clear()
 {
-
+    delete[] items;
+    items = nullptr;
+    itemCount = 0;
 }
