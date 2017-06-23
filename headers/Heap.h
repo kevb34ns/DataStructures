@@ -10,7 +10,7 @@ class Heap
 {
 private:
     const int ROOT_INDEX = 0; ///< index of the root
-    const int DEFAULT_CAPACITY = 31; ///< default capacity to initialize array 
+    const int DEFAULT_CAPACITY = 15; ///< default capacity to initialize array 
 
     T* items; ///< the array of items representing a heap
     int itemCount; ///< the number of items in the heap
@@ -68,6 +68,12 @@ private:
      * Transforms an arbitrarily ordered array into a heap.
      */
     virtual void heapify();
+
+    /**
+     * Resizes the heap when its capacity has been reached, to allow for more
+     * items to be added.
+     */
+    virtual void resize();
 
 public:
     Heap(); ///< Default constructor
@@ -128,13 +134,13 @@ public:
 
 };
 
-template <class T>j
-Heap<T>::Heap() : itemCount(0), capcity(DEFAULT_CAPACITY)
+template <class T>
+Heap<T>::Heap() : itemCount(0), capacity(DEFAULT_CAPACITY)
 {
     items = new T[capacity];
 }
 
-template <class T>j
+template <class T>
 Heap<T>::Heap(const T* array, const int size) : capacity(size)
 {
     items = new T[size];
@@ -146,13 +152,13 @@ Heap<T>::Heap(const T* array, const int size) : capacity(size)
     heapify();
 }
 
-template <class T>j
+template <class T>
 Heap<T>::~Heap()
 {
     clear();
 }
 
-template <class T>j
+template <class T>
 int Heap<T>::getLeftChildIndex(const int parentIndex) const
 {
     if (parentIndex < 0)
@@ -164,7 +170,7 @@ int Heap<T>::getLeftChildIndex(const int parentIndex) const
     return (leftChildIndex < itemCount) ? leftChildIndex : -1;
 }
 
-template <class T>j
+template <class T>
 int Heap<T>::getRightChildIndex(const int parentIndex) const
 {
     if (parentIndex < 0)
@@ -176,7 +182,7 @@ int Heap<T>::getRightChildIndex(const int parentIndex) const
     return (rightChildIndex < itemCount) ? rightChildIndex : -1;
 }
 
-template <class T>j
+template <class T>
 int Heap<T>::getParentIndex(const int childIndex) const
 {
     if (childIndex <= 0 || childIndex >= itemCount)
@@ -191,14 +197,13 @@ int Heap<T>::getParentIndex(const int childIndex) const
 template <class T>
 bool Heap<T>::isLeaf(const int index) const
 {
-    if (getLeftChildIndex(index) == -1 &&
-        getRightChildIndex(index) == -1)
+    if (index < 0 || index >= itemCount)
     {
-        return true;
+        return false;
     }
     else
     {
-        return false;
+        return index >= (itemCount + 1) / 2;
     }
 }
 
@@ -243,7 +248,23 @@ void Heap<T>::heapRebuild(int subtreeIndex)
 template <class T>
 void Heap<T>::heapify()
 {
-    //TODO see notes
+    for (int i = itemCount / 2 - 1; i >= 0; i--)
+    {
+        heapRebuild(i);
+    }
+}
+
+template <class T>
+void Heap<T>::resize()
+{
+    capacity *= 2;
+    T* newArray = new T[capacity];
+    for (int i = 0; i < itemCount; ++i)
+    {
+        newArray[i] = items[i];
+    }
+    delete[] items;
+    items = newArray;
 }
 
 template <class T>
@@ -279,13 +300,46 @@ const T& Heap<T>::peekTop() const
 template <class T>
 bool Heap<T>::add(const T& newData)
 {
+    if (itemCount == capacity)
+    {
+        resize();
+    }
 
+    items[itemCount] = newData;
+
+    // i represents the current index of the new item
+    int i = itemCount;
+    while (i > 0)
+    {
+        int parentIndex = getParentIndex(i);
+        if (items[i] > items[parentIndex])
+        {
+            swap(i, parentIndex);
+            i = parentIndex;
+        }
+        else
+        {
+            break;
+        }
+    }
+
+    itemCount++;
+    return true;
 }
 
 template <class T>
 bool Heap<T>::remove()
 {
+    if (isEmpty())
+    {
+        return false;
+    }
 
+    swap(0, itemCount - 1);
+    itemCount--;
+    heapRebuild(0);
+
+    return true;
 }
 
 template <class T>
