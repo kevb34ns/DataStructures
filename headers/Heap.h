@@ -190,7 +190,7 @@ int Heap<T>::getParentIndex(const int childIndex) const
         return -1;
     }
 
-    int parentIndex = childIndex / 2 - 1;
+    int parentIndex = (childIndex - 1) / 2;
     return parentIndex;
 }
 
@@ -210,6 +210,11 @@ bool Heap<T>::isLeaf(const int index) const
 template <class T>
 void Heap<T>::swap(int index1, int index2)
 {
+    if (index1 < 0 || index1 >= itemCount || index2 < 0 || index2 >= itemCount)
+    {
+        throw std::range_error("Out of range in Heap<T>::swap");
+    }
+
     T temp = items[index1];
     items[index1] = items[index2];
     items[index2] = temp;
@@ -306,10 +311,11 @@ bool Heap<T>::add(const T& newData)
     }
 
     items[itemCount] = newData;
+    itemCount++;
 
     // i represents the current index of the new item
-    int i = itemCount;
-    while (i > 0)
+    int i = itemCount - 1;
+    while (i > 0 && itemCount != 1)
     {
         int parentIndex = getParentIndex(i);
         if (items[i] > items[parentIndex])
@@ -323,7 +329,6 @@ bool Heap<T>::add(const T& newData)
         }
     }
 
-    itemCount++;
     return true;
 }
 
@@ -335,9 +340,12 @@ bool Heap<T>::remove()
         return false;
     }
 
-    swap(0, itemCount - 1);
     itemCount--;
-    heapRebuild(0);
+    if (itemCount != 0)
+    {
+        swap(0, itemCount - 1);
+        heapRebuild(0);
+    }
 
     return true;
 }

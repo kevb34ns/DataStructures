@@ -34,12 +34,40 @@ TEST(HeapTest, SimpleHeapTest)
         ASSERT_GE(testArray[i], testArray[i - 1]);
     }
 
+    heap.clear();
+
+    EXPECT_TRUE(heap.isEmpty());
+
     delete[] testArray;
 }
 
 TEST(HeapTest, CopyTest)
 {
+    const int SIZE = 20;    
+    int* array = new int[SIZE];
+    for (int i = 0; i < SIZE; i++)
+    {
+        array[i] = i;
+    }
 
+    Heap<int> heap(array, SIZE);
+    EXPECT_EQ(heap.getNumNodes(), SIZE);
+
+    delete[] array;
+
+    array = new int[SIZE];
+    for (int i = 0; i < SIZE; i++)
+    {
+        array[i] = heap.peekTop();
+        heap.remove();
+    }
+
+    for (int i = SIZE - 1; i >= 0; i--)
+    {
+        ASSERT_EQ(i, array[i]);
+    }
+
+    delete[] array;
 }
 
 int main (int argc, char** argv)
