@@ -31,7 +31,7 @@ TEST(HeapTest, SimpleHeapTest)
 
     for (int i = 0; i < 14; i++)
     {
-        ASSERT_GE(testArray[i], testArray[i - 1]);
+        EXPECT_GE(testArray[i], testArray[i + 1]);
     }
 
     heap.clear();
@@ -64,7 +64,7 @@ TEST(HeapTest, CopyTest)
 
     for (int i = SIZE - 1; i >= 0; i--)
     {
-        ASSERT_EQ(i, array[i]);
+        EXPECT_EQ(i, array[SIZE - i - 1]);
     }
 
     delete[] array;

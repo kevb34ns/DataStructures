@@ -144,6 +144,7 @@ template <class T>
 Heap<T>::Heap(const T* array, const int size) : capacity(size)
 {
     items = new T[size];
+    itemCount = size;
     for (int i = 0; i < size; i++)
     {
         items[i] = array[i];
@@ -232,13 +233,13 @@ void Heap<T>::heapRebuild(int subtreeIndex)
     int left = getLeftChildIndex(subtreeIndex);
     int right = getRightChildIndex(subtreeIndex);
     
-    if (isLeaf(subtreeIndex) || (items[subtreeIndex] >= left && 
-                                 items[subtreeIndex] >= right))
+    if (isLeaf(subtreeIndex) || (items[subtreeIndex] >= items[left] && 
+                                 items[subtreeIndex] >= items[right]))
     {
         return;
     }
 
-    if (left >= right)
+    if (items[left] >= items[right])
     {
         swap(subtreeIndex, left);
         heapRebuild(left);
@@ -299,7 +300,7 @@ const T& Heap<T>::peekTop() const
                                 heap.");
     }
 
-    return items[0];
+    return items[ROOT_INDEX];
 }
 
 template <class T>
@@ -340,11 +341,15 @@ bool Heap<T>::remove()
         return false;
     }
 
-    itemCount--;
-    if (itemCount != 0)
+    if (itemCount != 1)
     {
-        swap(0, itemCount - 1);
-        heapRebuild(0);
+        swap(ROOT_INDEX, itemCount - 1);
+        itemCount--;
+        heapRebuild(ROOT_INDEX);
+    }
+    else
+    {
+        itemCount--;
     }
 
     return true;
