@@ -9,6 +9,7 @@
 
 #include "BinaryTreeNode.h"
 #include "BinaryTree.h"
+#include <stdexcept>
 
 template <class T>
 class BinarySearchTree : private BinaryTree<T>
@@ -106,6 +107,19 @@ public:
      * @return true if the item is in the tree, false otherwise.
      */
     virtual bool contains(const T& item) const;
+
+    /**
+     * Returns the item in the tree, if it exists. May be useful, for example,
+     * for a dictionary implementation where the item given as a parameter only
+     * has a search key, and the actual value is contained in the item within
+     * the tree.
+     * @param item The item to search for.
+     * @return A const reference to the item in the tree, if it exists, or @c 
+     *         nullptr otherwise.
+     * 
+     * @throws runtime_error if the item does not exist in the tree.
+     */
+    virtual const T& getItem(const T& item) const;
 
     // interfaces to derived methods
     virtual bool empty() const;
@@ -316,6 +330,20 @@ template <class T>
 bool BinarySearchTree<T>::contains(const T& item) const
 {
     return containsHelper(rootPtr, item) != nullptr;
+}
+
+template <class T>
+const T& BinarySearchTree<T>::getItem(const T& item) const
+{
+    BinaryTreeNode<T>* nodePtr = containsHelper(rootPtr, item);
+    if (nodePtr != nullptr)
+    {
+        return nodePtr->getItem();
+    }
+    else
+    {
+        throw runtime_error("Item not found in BinarySearchTree<T>::getItem");
+    }
 }
 
 template <class T>
